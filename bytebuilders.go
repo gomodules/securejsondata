@@ -21,7 +21,7 @@ func GetBaseUrl(host string, production bool) string {
 	if production {
 		baseUrl = fmt.Sprintf("https://%v", baseDomain)
 	} else {
-		baseUrl = fmt.Sprintf("http://%v:3000", baseDomain)
+		baseUrl = fmt.Sprintf("http://%v:5998", baseDomain)
 	}
 	return baseUrl
 }
