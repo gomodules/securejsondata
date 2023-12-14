@@ -5,23 +5,32 @@ import (
 	"strings"
 )
 
+const prodDomain = "appscode.com"
+
 func GetBaseDomain(host string) string {
 	addr, err := SplitHostPortDefault(host, "", "")
 	if err != nil {
-		return "byte.builders"
+		return prodDomain
 	}
 	parts := strings.Split(addr.Host, ".")
 	base := strings.Join(parts[1:], ".")
 	return base
 }
 
-func GetBaseUrl(host string, production bool) string {
+func platformDomain(domain string) string {
+	if domain == prodDomain {
+		return fmt.Sprintf("home.%s", domain)
+	}
+	return domain
+}
+
+func GetPlatformUrl(host string, production bool) string {
 	var baseUrl string
 	baseDomain := GetBaseDomain(host)
 	if production {
-		baseUrl = fmt.Sprintf("https://%v", baseDomain)
+		baseUrl = fmt.Sprintf("https://%v", platformDomain(baseDomain))
 	} else {
-		baseUrl = fmt.Sprintf("http://%v:5998", baseDomain)
+		baseUrl = fmt.Sprintf("http://%v:8080", baseDomain)
 	}
 	return baseUrl
 }
