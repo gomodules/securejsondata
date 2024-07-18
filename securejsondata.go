@@ -1,9 +1,7 @@
 package securejsondata
 
 import (
-	"github.com/grafana/grafana/pkg/infra/log"
-	"github.com/grafana/grafana/pkg/setting"
-	"github.com/grafana/grafana/pkg/util"
+	"log"
 )
 
 // SecureJsonData is used to store encrypted data (for example in data_source table). Only values are separately
@@ -14,9 +12,9 @@ type SecureJsonData map[string][]byte
 // is true if the key exists and false if not.
 func (s SecureJsonData) DecryptedValue(key string) (string, bool) {
 	if value, ok := s[key]; ok {
-		decryptedData, err := util.Decrypt(value, setting.SecretKey)
+		decryptedData, err := Decrypt(value, SecretKey())
 		if err != nil {
-			log.Fatalf(4, err.Error())
+			log.Fatalln(err)
 		}
 		return string(decryptedData), true
 	}
@@ -28,9 +26,9 @@ func (s SecureJsonData) DecryptedValue(key string) (string, bool) {
 func (s SecureJsonData) Decrypt() map[string]string {
 	decrypted := make(map[string]string)
 	for key, data := range s {
-		decryptedData, err := util.Decrypt(data, setting.SecretKey)
+		decryptedData, err := Decrypt(data, SecretKey())
 		if err != nil {
-			log.Fatalf(4, err.Error())
+			log.Fatalln(err)
 		}
 
 		decrypted[key] = string(decryptedData)
@@ -42,9 +40,9 @@ func (s SecureJsonData) Decrypt() map[string]string {
 func GetEncryptedJsonData(sjd map[string]string) SecureJsonData {
 	encrypted := make(SecureJsonData)
 	for key, data := range sjd {
-		encryptedData, err := util.Encrypt([]byte(data), setting.SecretKey)
+		encryptedData, err := Encrypt([]byte(data), SecretKey())
 		if err != nil {
-			log.Fatalf(4, err.Error())
+			log.Fatalln(err)
 		}
 
 		encrypted[key] = encryptedData
